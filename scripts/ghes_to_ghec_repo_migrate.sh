@@ -61,6 +61,7 @@ gh gei migrate-repo \
   --target-repo "$TARGET_REPO_NAME" \
   --source-repo "$SOURCE_REPO_NAME" \
   --github-target-pat "$GHEC_PAT" \
+  --target-api-url "https://api.octocorp.ghe.com" \
   --verbose
 
 # ========== STATUS ==========
