@@ -55,7 +55,7 @@ echo "🎯 Target: github.com/$TARGET_REPO"
 
 gh gei migrate-repo \
   --ghes-api-url "$GHES_URL/api/v3" \
-  --ghes-pat "$GHES_PAT" \
+  --github-source-pat "$GHES_PAT" \
   --github-source-org "$SOURCE_ORG" \
   --github-target-org "$TARGET_ORG" \
   --target-repo "$TARGET_REPO_NAME" \
