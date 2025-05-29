@@ -1,0 +1,51 @@
+name: Migrate GHES Repo to GHEC
+
+on:
+  workflow_dispatch:  # Manual trigger
+  push:
+    paths:
+      - 'repo-list.csv'        # Automatic trigger on repo-list.csv change
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Make script executable
+        run: chmod +x ./scripts/ghes_to_ghec_repo_migrate.sh
+      
+      - name: Install GitHub Enterprise Importer CLI
+        run: gh extension install github/gh-gei
+        env:
+          GH_TOKEN: ${{ secrets.GHEC_PAT }}
+      
+      - name: Auth GH CLI
+        run: gh auth status
+        env:
+          GH_TOKEN: ${{ secrets.GHEC_PAT }}
+      
+      - name: Run migration script
+        env:
+          GHES_URL: ${{ secrets.GHES_URL }}
+          GHES_PAT: ${{ secrets.GHES_PAT }}
+          GHEC_PAT: ${{ secrets.GHEC_PAT }}
+          GH_TOKEN: ${{ secrets.GHEC_PAT }}
+        run: |
+          set -e
+      
+          while IFS=, read -r SOURCE_REPO TARGET_REPO
+          do
+            echo "🚀 Starting migration: $SOURCE_REPO ➜ $TARGET_REPO"
+      
+            if ./scripts/ghes_to_ghec_repo_migrate.sh "$GHES_URL" "$GHES_PAT" "$GHEC_PAT" "$SOURCE_REPO" "$TARGET_REPO"; then
+              echo "✅ SUCCESS: $SOURCE_REPO migrated successfully."
+            else
+              echo "❌ ERROR: Migration failed for $SOURCE_REPO ➜ $TARGET_REPO"
+              exit 1
+            fi
+      
+            echo "-------------------------"
+          done < repo-list.csv
