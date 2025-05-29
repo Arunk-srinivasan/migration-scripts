@@ -64,6 +64,13 @@ gh gei migrate-repo \
   --target-api-url "https://api.octocorp.ghe.com" \
   --verbose
 
+if [ $? -ne 0 ]; then
+ echo "❌ Migration failed for $SOURCE_REPO_NAME ➜ $TARGET_REPO_NAME"
+ exit 1
+else
+ echo "✅ Migration succeeded for $SOURCE_REPO_NAME ➜ $TARGET_REPO_NAME"
+ fi
+
 # ========== STATUS ==========
 echo ""
 echo "📦 Migration initiated. Use the following to check status:"
